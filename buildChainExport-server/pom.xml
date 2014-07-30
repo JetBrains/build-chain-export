@@ -30,5 +30,12 @@
           <version>95.677</version>
           <scope>provided</scope>
       </dependency>
+
+      <dependency>
+          <groupId>org.jetbrains.teamcity</groupId>
+          <artifactId>tests-support</artifactId>
+          <version>${teamcity-version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 </project>
