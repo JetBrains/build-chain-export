@@ -9,29 +9,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-public class DotFormat extends GraphFormat {
-  @NotNull
-  public String export(@NotNull BuildPromotion startFrom) {
-    StringBuilder graph = new StringBuilder();
-    graph.append("digraph \"").append(nodeLabel(startFrom)).append("\" {\n");
-
-    Set<BuildPromotion> processed = new HashSet<BuildPromotion>();
-
-    Queue<BuildDependency> toProcess = new LinkedList<BuildDependency>();
-    toProcess.addAll(startFrom.getDependencies());
-
-    while (!toProcess.isEmpty()) {
-      BuildDependency dep = toProcess.poll();
-      graph.append(edge(dep, processed));
-      toProcess.addAll(dep.getDependOn().getDependencies());
-    }
-
-    graph.append("}");
-    return graph.toString();
-  }
+public class DotFormat extends PlainTextFormat {
 
   @NotNull
-  private String edge(@NotNull BuildDependency dep, @NotNull Set<BuildPromotion> processed) {
+  protected String edge(@NotNull BuildDependency dep, @NotNull Set<BuildPromotion> processed) {
     StringBuilder graph = new StringBuilder();
     BuildPromotion dependent = dep.getDependent();
     if (processed.add(dependent)) {
@@ -46,6 +27,18 @@ public class DotFormat extends GraphFormat {
     graph.append(nodeId(dependOn)).append(" -> ").append(nodeId(dependent)).append(";\n");
 
     return graph.toString();
+  }
+
+  @NotNull
+  @Override
+  protected String prefix(@NotNull BuildPromotion startFrom) {
+    return "digraph \"" + nodeLabel(startFrom) + "\" {\n";
+  }
+
+  @NotNull
+  @Override
+  protected String suffix(@NotNull BuildPromotion startFrom) {
+    return "}";
   }
 
   private String nodeId(BuildPromotion node) {

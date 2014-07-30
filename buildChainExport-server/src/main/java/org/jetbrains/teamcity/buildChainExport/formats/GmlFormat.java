@@ -9,35 +9,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-public class GmlFormat extends GraphFormat {
+public class GmlFormat extends PlainTextFormat {
   @NotNull
-  public String export(@NotNull BuildPromotion startFrom) {
-    StringBuilder graph = new StringBuilder();
-    graph.append("graph [\n");
-    graph.append("  directed 1\n");
-
-    Set<BuildPromotion> processed = new HashSet<BuildPromotion>();
-
-    Queue<BuildPromotion> toProcess = new LinkedList<BuildPromotion>();
-    toProcess.add(startFrom);
-
-    while (!toProcess.isEmpty()) {
-      BuildPromotion promo = toProcess.poll();
-      for (BuildDependency dep: promo.getDependencies()) {
-        if (!processed.contains(dep.getDependOn())) {
-          toProcess.add(dep.getDependOn());
-        }
-
-        graph.append(edge(dep, processed));
-      }
-    }
-
-    graph.append("]");
-    return graph.toString();
-  }
-
-  @NotNull
-  private String edge(@NotNull BuildDependency dep, @NotNull Set<BuildPromotion> processed) {
+  protected String edge(@NotNull BuildDependency dep, @NotNull Set<BuildPromotion> processed) {
     StringBuilder edge = new StringBuilder();
     BuildPromotion dependent = dep.getDependent();
     if (processed.add(dependent)) {
@@ -55,6 +29,19 @@ public class GmlFormat extends GraphFormat {
     edge.append("]\n");
 
     return edge.toString();
+  }
+
+  @NotNull
+  @Override
+  protected String prefix(@NotNull BuildPromotion startFrom) {
+    return "graph [\n" +
+           "  directed 1\n";
+  }
+
+  @NotNull
+  @Override
+  protected String suffix(@NotNull BuildPromotion startFrom) {
+    return "]";
   }
 
   @NotNull
