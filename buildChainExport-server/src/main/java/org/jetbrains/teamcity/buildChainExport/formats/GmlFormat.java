@@ -18,13 +18,18 @@ public class GmlFormat extends GraphFormat {
 
     Set<BuildPromotion> processed = new HashSet<BuildPromotion>();
 
-    Queue<BuildDependency> toProcess = new LinkedList<BuildDependency>();
-    toProcess.addAll(startFrom.getDependencies());
+    Queue<BuildPromotion> toProcess = new LinkedList<BuildPromotion>();
+    toProcess.add(startFrom);
 
     while (!toProcess.isEmpty()) {
-      BuildDependency dep = toProcess.poll();
-      graph.append(edge(dep, processed));
-      toProcess.addAll(dep.getDependOn().getDependencies());
+      BuildPromotion promo = toProcess.poll();
+      for (BuildDependency dep: promo.getDependencies()) {
+        if (!processed.contains(dep.getDependOn())) {
+          toProcess.add(dep.getDependOn());
+        }
+
+        graph.append(edge(dep, processed));
+      }
     }
 
     graph.append("]");
@@ -55,9 +60,9 @@ public class GmlFormat extends GraphFormat {
   @NotNull
   private String nodeWithLabel(@NotNull BuildPromotion promotion) {
     return "node [\n" +
-           "  id " + nodeId(promotion) + "\n" +
-           "  label \"" + nodeLabel(promotion) + "\"\n" +
-           "]\n";
+        "  id " + nodeId(promotion) + "\n" +
+        "  label \"" + nodeLabel(promotion) + "\"\n" +
+        "]\n";
   }
 
   @NotNull

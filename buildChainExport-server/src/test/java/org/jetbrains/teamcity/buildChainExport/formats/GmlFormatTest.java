@@ -95,6 +95,36 @@ public class GmlFormatTest extends BaseTestCase {
     System.out.println(result);
   }
 
+  public void test_rhomb_with_leaf() {
+    GmlFormat gml = new GmlFormat();
+    Mock n1 = createNode(1, "bt1");
+    Mock n2 = createNode(2, "bt2");
+    Mock n3 = createNode(3, "bt3");
+    Mock n4 = createNode(4, "bt4");
+    Mock n5 = createNode(5, "bt5");
+    BuildDependency edge1 = createEdge(n1, n2);
+    BuildDependency edge2 = createEdge(n1, n3);
+    BuildDependency edge3 = createEdge(n2, n4);
+    BuildDependency edge4 = createEdge(n3, n4);
+    BuildDependency edge5 = createEdge(n4, n5);
+    setEdges(n1, edge1, edge2);
+    setEdges(n2, edge3);
+    setEdges(n3, edge4);
+    setEdges(n4, edge5);
+    setEdges(n5);
+
+    String result = gml.export((BuildPromotion) n1.proxy());
+    assertNumNodes(result, 5);
+    assertNumEdges(result, 5);
+    assertHasEdge(result, 2, 1);
+    assertHasEdge(result, 3, 1);
+    assertHasEdge(result, 4, 2);
+    assertHasEdge(result, 4, 3);
+    assertHasEdge(result, 5, 4);
+
+    System.out.println(result);
+  }
+
   private BuildDependency createEdge(@NotNull Mock n1, @NotNull Mock n2) {
     Mock edge = mock(BuildDependency.class);
     edge.stubs().method("getDependOn").will(returnValue(n2.proxy()));
