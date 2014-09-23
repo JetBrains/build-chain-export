@@ -1,7 +1,15 @@
 package org.jetbrains.teamcity.buildChainExport.controllers;
 
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import jetbrains.buildServer.controllers.BaseController;
-import jetbrains.buildServer.serverSide.*;
+import jetbrains.buildServer.serverSide.BuildPromotion;
+import jetbrains.buildServer.serverSide.BuildPromotionManager;
+import jetbrains.buildServer.serverSide.ProjectManager;
+import jetbrains.buildServer.serverSide.SBuildType;
 import jetbrains.buildServer.util.StringUtil;
 import jetbrains.buildServer.web.openapi.WebControllerManager;
 import org.jetbrains.annotations.NotNull;
@@ -12,12 +20,6 @@ import org.jetbrains.teamcity.buildChainExport.formats.GraphFormat;
 import org.jetbrains.teamcity.buildChainExport.nodes.BuildTypeNode;
 import org.jetbrains.teamcity.buildChainExport.nodes.PromotionNode;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ExportChainController extends BaseController {
   private final BuildPromotionManager myBuildPromotionManager;
@@ -53,21 +55,14 @@ public class ExportChainController extends BaseController {
       result = format.export(new PromotionNode(promotion));
     } else {
       String buildTypeId = request.getParameter("buildTypeId");
-      if (buildTypeId == null){
+      if (buildTypeId == null) {
         return simpleView("Neither 'promotionId' nor 'buildTypeId' parameters are specified");
       }
       final SBuildType buildType = myProjectManager.findBuildTypeByExternalId(buildTypeId);
-      if (buildType == null){
+      if (buildType == null) {
         return simpleView("Build configuration with id '" + buildTypeId + "' is not found");
       }
-      String useDummy = request.getParameter("useDummy");
-      if (useDummy == null || (!Boolean.valueOf(useDummy))){
-        result = format.export(new BuildTypeNode(buildType));
-      }else{
-        //Object here is to make it possible to compile the code against both TeamCity 8.0 and 8.1
-        final Object dummyPromotion = myBuildPromotionManager.createDummyPromotion((BuildTypeEx)buildType);
-        result = format.export(new PromotionNode((BuildPromotion)dummyPromotion));
-      }
+      result = format.export(new BuildTypeNode(buildType));
     }
 
     response.setContentType("text/plain");
