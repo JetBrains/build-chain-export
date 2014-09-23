@@ -5,6 +5,7 @@ import jetbrains.buildServer.web.openapi.PagePlaces;
 import jetbrains.buildServer.web.openapi.PlaceId;
 import jetbrains.buildServer.web.openapi.PluginDescriptor;
 import jetbrains.buildServer.web.openapi.SimplePageExtension;
+import jetbrains.buildServer.web.util.WebUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class BuildTypeExtension extends SimplePageExtension {
@@ -18,6 +19,6 @@ public class BuildTypeExtension extends SimplePageExtension {
 
   @Override
   public boolean isAvailable(@NotNull final HttpServletRequest request) {
-    return request.getRequestURI().contains("/viewType.html");
+    return super.isAvailable(request) && WebUtil.getPathWithoutContext(request).startsWith("/viewType.html");
   }
 }
