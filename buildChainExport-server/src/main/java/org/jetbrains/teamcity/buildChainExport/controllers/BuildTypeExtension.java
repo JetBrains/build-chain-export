@@ -8,10 +8,10 @@ import jetbrains.buildServer.web.openapi.SimplePageExtension;
 import jetbrains.buildServer.web.util.WebUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class BuildResultsExtension extends SimplePageExtension {
-  public BuildResultsExtension(@NotNull PagePlaces pagePlaces, @NotNull PluginDescriptor pluginDescriptor) {
+public class BuildTypeExtension extends SimplePageExtension {
+  public BuildTypeExtension(@NotNull PagePlaces pagePlaces, @NotNull PluginDescriptor pluginDescriptor) {
     super(pagePlaces);
-    setIncludeUrl(pluginDescriptor.getPluginResourcesPath("buildResults.jsp"));
+    setIncludeUrl(pluginDescriptor.getPluginResourcesPath("buildType.jsp"));
     setPlaceId(PlaceId.ALL_PAGES_FOOTER);
     setPluginName(pluginDescriptor.getPluginName());
     register();
@@ -19,6 +19,6 @@ public class BuildResultsExtension extends SimplePageExtension {
 
   @Override
   public boolean isAvailable(@NotNull final HttpServletRequest request) {
-    return super.isAvailable(request) && WebUtil.getPathWithoutContext(request).startsWith("/viewLog.html");
+    return super.isAvailable(request) && WebUtil.getPathWithoutContext(request).startsWith("/viewType.html");
   }
 }

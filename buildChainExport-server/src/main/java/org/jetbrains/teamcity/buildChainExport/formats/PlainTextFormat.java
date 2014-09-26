@@ -1,34 +1,33 @@
 package org.jetbrains.teamcity.buildChainExport.formats;
 
-import jetbrains.buildServer.serverSide.BuildPromotion;
-import jetbrains.buildServer.serverSide.dependency.BuildDependency;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import org.jetbrains.teamcity.buildChainExport.nodes.GraphNode;
 
 public abstract class PlainTextFormat extends GraphFormat {
   @Override
-  public final String export(@NotNull BuildPromotion startFrom) {
+  public final String export(@NotNull GraphNode startFrom) {
     StringBuilder result = new StringBuilder();
 
     result.append(prefix(startFrom));
 
-    Set<BuildPromotion> processed = new HashSet<BuildPromotion>();
+    Set<GraphNode> processed = new HashSet<GraphNode>();
 
-    Queue<BuildPromotion> toProcess = new LinkedList<BuildPromotion>();
+    Queue<GraphNode> toProcess = new LinkedList<GraphNode>();
     toProcess.add(startFrom);
 
     while (!toProcess.isEmpty()) {
-      BuildPromotion promo = toProcess.poll();
-      for (BuildDependency dep: promo.getDependencies()) {
-        if (!processed.contains(dep.getDependOn())) {
-          toProcess.add(dep.getDependOn());
+      GraphNode promo = toProcess.poll();
+      for (GraphNode dep: promo.getChildren()) {
+        if (!processed.contains(dep)) {
+          toProcess.add(dep);
         }
 
-        result.append(edge(dep, processed));
+        result.append(edge(promo, dep, processed));
       }
     }
 
@@ -38,11 +37,11 @@ public abstract class PlainTextFormat extends GraphFormat {
   }
 
   @NotNull
-  protected abstract String edge(@NotNull BuildDependency dependency, @NotNull Set<BuildPromotion> processed);
+  protected abstract String edge(@NotNull GraphNode dependent, @NotNull GraphNode dependOn, @NotNull Set<GraphNode> processed);
 
   @NotNull
-  protected abstract String prefix(@NotNull BuildPromotion startFrom);
+  protected abstract String prefix(@NotNull GraphNode startFrom);
 
   @NotNull
-  protected abstract String suffix(@NotNull BuildPromotion startFrom);
+  protected abstract String suffix(@NotNull GraphNode startFrom);
 }

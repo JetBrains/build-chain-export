@@ -1,8 +1,7 @@
 package org.jetbrains.teamcity.buildChainExport.formats;
 
-import jetbrains.buildServer.serverSide.BuildPromotion;
-import jetbrains.buildServer.serverSide.dependency.BuildDependency;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.teamcity.buildChainExport.nodes.GraphNode;
 import org.jmock.Mock;
 import org.testng.annotations.Test;
 
@@ -12,11 +11,10 @@ public class DotFormatTest extends BaseFormatTestCase {
     GraphFormat fmt = new DotFormat();
     Mock n1 = createNode(1, "bt1");
     Mock n2 = createNode(2, "bt2");
-    BuildDependency edge = createEdge(n1, n2);
-    setEdges(n1, edge);
-    setEdges(n2);
+    setChildren(n1, n2);
+    setChildren(n2);
 
-    String result = fmt.export((BuildPromotion) n1.proxy());
+    String result = fmt.export((GraphNode) n1.proxy());
     assertNumNodes(result, 2);
     assertNumEdges(result, 1);
     assertHasEdge(result, 2, 1);
@@ -27,13 +25,11 @@ public class DotFormatTest extends BaseFormatTestCase {
     Mock n1 = createNode(1, "bt1");
     Mock n2 = createNode(2, "bt2");
     Mock n3 = createNode(3, "bt3");
-    BuildDependency edge1 = createEdge(n1, n2);
-    BuildDependency edge2 = createEdge(n1, n3);
-    setEdges(n1, edge1, edge2);
-    setEdges(n2);
-    setEdges(n3);
+    setChildren(n1, n2, n3);
+    setChildren(n2);
+    setChildren(n3);
 
-    String result = fmt.export((BuildPromotion) n1.proxy());
+    String result = fmt.export((GraphNode) n1.proxy());
     assertNumNodes(result, 3);
     assertNumEdges(result, 2);
     assertHasEdge(result, 2, 1);
@@ -45,14 +41,11 @@ public class DotFormatTest extends BaseFormatTestCase {
     Mock n1 = createNode(1, "bt1");
     Mock n2 = createNode(2, "bt2");
     Mock n3 = createNode(3, "bt3");
-    BuildDependency edge1 = createEdge(n1, n2);
-    BuildDependency edge2 = createEdge(n1, n3);
-    BuildDependency edge3 = createEdge(n2, n3);
-    setEdges(n1, edge1, edge2);
-    setEdges(n2, edge3);
-    setEdges(n3);
+    setChildren(n1, n2, n3);
+    setChildren(n2, n3);
+    setChildren(n3);
 
-    String result = fmt.export((BuildPromotion) n1.proxy());
+    String result = fmt.export((GraphNode) n1.proxy());
     assertNumNodes(result, 3);
     assertNumEdges(result, 3);
     assertHasEdge(result, 2, 1);
@@ -68,16 +61,12 @@ public class DotFormatTest extends BaseFormatTestCase {
     Mock n2 = createNode(2, "bt2");
     Mock n3 = createNode(3, "bt3");
     Mock n4 = createNode(4, "bt4");
-    BuildDependency edge1 = createEdge(n1, n2);
-    BuildDependency edge2 = createEdge(n1, n3);
-    BuildDependency edge3 = createEdge(n2, n4);
-    BuildDependency edge4 = createEdge(n3, n4);
-    setEdges(n1, edge1, edge2);
-    setEdges(n2, edge3);
-    setEdges(n3, edge4);
-    setEdges(n4);
+    setChildren(n1, n2, n3);
+    setChildren(n2, n4);
+    setChildren(n3, n4);
+    setChildren(n4);
 
-    String result = fmt.export((BuildPromotion) n1.proxy());
+    String result = fmt.export((GraphNode) n1.proxy());
     assertNumNodes(result, 4);
     assertNumEdges(result, 4);
     assertHasEdge(result, 2, 1);
@@ -93,18 +82,13 @@ public class DotFormatTest extends BaseFormatTestCase {
     Mock n3 = createNode(3, "bt3");
     Mock n4 = createNode(4, "bt4");
     Mock n5 = createNode(5, "bt5");
-    BuildDependency edge1 = createEdge(n1, n2);
-    BuildDependency edge2 = createEdge(n1, n3);
-    BuildDependency edge3 = createEdge(n2, n4);
-    BuildDependency edge4 = createEdge(n3, n4);
-    BuildDependency edge5 = createEdge(n4, n5);
-    setEdges(n1, edge1, edge2);
-    setEdges(n2, edge3);
-    setEdges(n3, edge4);
-    setEdges(n4, edge5);
-    setEdges(n5);
+    setChildren(n1, n2, n3);
+    setChildren(n2, n4);
+    setChildren(n3, n4);
+    setChildren(n4, n5);
+    setChildren(n5);
 
-    String result = fmt.export((BuildPromotion) n1.proxy());
+    String result = fmt.export((GraphNode) n1.proxy());
     assertNumNodes(result, 5);
     assertNumEdges(result, 5);
     assertHasEdge(result, 2, 1);

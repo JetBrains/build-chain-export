@@ -1,25 +1,19 @@
 package org.jetbrains.teamcity.buildChainExport.formats;
 
-import jetbrains.buildServer.serverSide.BuildPromotion;
-import jetbrains.buildServer.serverSide.dependency.BuildDependency;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
+import org.jetbrains.teamcity.buildChainExport.nodes.GraphNode;
 
 public class DotFormat extends PlainTextFormat {
 
   @NotNull
-  protected String edge(@NotNull BuildDependency dep, @NotNull Set<BuildPromotion> processed) {
+  protected String edge(@NotNull final GraphNode dependent, @NotNull final GraphNode dependOn, @NotNull final Set<GraphNode> processed) {
     StringBuilder graph = new StringBuilder();
-    BuildPromotion dependent = dep.getDependent();
     if (processed.add(dependent)) {
       graph.append(nodeWithLabel(dependent));
     }
 
-    BuildPromotion dependOn = dep.getDependOn();
     if (processed.add(dependOn)) {
       graph.append(nodeWithLabel(dependOn));
     }
@@ -31,27 +25,22 @@ public class DotFormat extends PlainTextFormat {
 
   @NotNull
   @Override
-  protected String prefix(@NotNull BuildPromotion startFrom) {
-    return "digraph \"" + nodeLabel(startFrom) + "\" {\n";
+  protected String prefix(@NotNull final GraphNode startFrom) {
+    return "digraph \"" + startFrom.getName() + "\" {\n";
   }
 
   @NotNull
   @Override
-  protected String suffix(@NotNull BuildPromotion startFrom) {
+  protected String suffix(@NotNull final GraphNode startFrom) {
     return "}";
   }
 
-  private String nodeId(BuildPromotion node) {
+  private String nodeId(@NotNull final GraphNode node) {
     return "b" + node.getId();
   }
 
   @NotNull
-  private String nodeWithLabel(@NotNull BuildPromotion promotion) {
-    return nodeId(promotion) + " [label=\"" + nodeLabel(promotion) + "\"];\n";
-  }
-
-  @NotNull
-  private String nodeLabel(@NotNull BuildPromotion promotion) {
-    return promotion.getBuildTypeExternalId();
+  private String nodeWithLabel(@NotNull final GraphNode promotion) {
+    return nodeId(promotion) + " [label=\"" + promotion.getName() + "\"];\n"; //todo: add escaping of quotes
   }
 }

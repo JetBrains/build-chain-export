@@ -3,4 +3,5 @@
 <beans default-autowire="constructor">
     <bean class="org.jetbrains.teamcity.buildChainExport.controllers.ExportChainController"/>
     <bean class="org.jetbrains.teamcity.buildChainExport.controllers.BuildResultsExtension"/>
+    <bean class="org.jetbrains.teamcity.buildChainExport.controllers.BuildTypeExtension"/>
 </beans>

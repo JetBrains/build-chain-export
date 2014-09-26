@@ -1,32 +1,30 @@
 package org.jetbrains.teamcity.buildChainExport.formats;
 
 import jetbrains.buildServer.BaseTestCase;
-import jetbrains.buildServer.serverSide.BuildPromotion;
-import jetbrains.buildServer.serverSide.dependency.BuildDependency;
+import jetbrains.buildServer.util.CollectionsUtil;
+import jetbrains.buildServer.util.Converter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.teamcity.buildChainExport.nodes.GraphNode;
 import org.jmock.Mock;
 
 import java.util.Arrays;
 
 public class BaseFormatTestCase extends BaseTestCase {
-  @NotNull
-  protected BuildDependency createEdge(@NotNull Mock n1, @NotNull Mock n2) {
-    Mock edge = mock(BuildDependency.class);
-    edge.stubs().method("getDependOn").will(returnValue(n2.proxy()));
-    edge.stubs().method("getDependent").will(returnValue(n1.proxy()));
-    return (BuildDependency)edge.proxy();
-  }
 
   @NotNull
   protected Mock createNode(long id, @NotNull String btId) {
-    Mock n1 = mock(BuildPromotion.class);
-    n1.stubs().method("getId").will(returnValue(id));
-    n1.stubs().method("getBuildTypeExternalId").will(returnValue(btId));
+    Mock n1 = mock(GraphNode.class);
+    n1.stubs().method("getId").will(returnValue(String.valueOf(id)));
+    n1.stubs().method("getName").will(returnValue(btId));
     return n1;
   }
 
-  protected void setEdges(Mock n1, BuildDependency... edges) {
-    n1.stubs().method("getDependencies").will(returnValue(Arrays.asList(edges)));
+  protected void setChildren(Mock n1, Mock... children) {
+    n1.stubs().method("getChildren").will(returnValue(CollectionsUtil.convertCollection(Arrays.asList(children), new Converter<Object, Mock>() {
+      public Object createFrom(@NotNull final Mock mock) {
+        return mock.proxy();
+      }
+    })));
   }
 
   protected void assertKeywordOccurrences(@NotNull String result, @NotNull String kwd, int expectedNum) {
