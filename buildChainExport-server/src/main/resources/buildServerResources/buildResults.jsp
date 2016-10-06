@@ -4,9 +4,11 @@
 <script type="text/javascript">
 BS.ChartExport = {
     installAction: function() {
-        $j('#bdDetails ul.menuList').append('<li class="menuItem" title="Export chain graph"><a href="${exportLink}" target="_blank">Export build chain graph</a></li>');
+        $j('#bdDetails ul.menuList').append('<li class="menuItem" title="Export chain graph" id="exportBuildChainGraph"><a href="${exportLink}" target="_blank">Export build chain graph</a></li>');
     }
 };
 
-BS.ChartExport.installAction();
+if (!$('exportBuildChainGraph')) {
+    BS.ChartExport.installAction();
+}
 </script>
