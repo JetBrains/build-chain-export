@@ -12,7 +12,8 @@ public class BuildResultsExtension extends SimplePageExtension {
   public BuildResultsExtension(@NotNull PagePlaces pagePlaces, @NotNull PluginDescriptor pluginDescriptor) {
     super(pagePlaces);
     setIncludeUrl(pluginDescriptor.getPluginResourcesPath("buildResults.jsp"));
-    setPlaceId(PlaceId.ALL_PAGES_FOOTER);
+    // TODO use constant when TeamCity 2021.1 is released
+    setPlaceId(new PlaceId("BUILD_ACTIONS"));
     setPluginName(pluginDescriptor.getPluginName());
     register();
   }

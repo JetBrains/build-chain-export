@@ -12,7 +12,8 @@ public class BuildTypeExtension extends SimplePageExtension {
   public BuildTypeExtension(@NotNull PagePlaces pagePlaces, @NotNull PluginDescriptor pluginDescriptor) {
     super(pagePlaces);
     setIncludeUrl(pluginDescriptor.getPluginResourcesPath("buildType.jsp"));
-    setPlaceId(PlaceId.ALL_PAGES_FOOTER);
+    // TODO use constant when TeamCity 2021.1 is released
+    setPlaceId(new PlaceId("BUILD_CONF_ACTIONS"));
     setPluginName(pluginDescriptor.getPluginName());
     register();
   }
